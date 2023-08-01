@@ -9,6 +9,12 @@ module.exports = {
         {name: 'beatmaps', type: 'beatmaps', uses: 'osuver,beatmaps_count'},
         {name: 'userperms', type: 'int32'}
     ],
+    scoreStruct: [
+        {name: 'osuver', type: 'int32'},
+        {name: 'beatmaps_count', type: 'int32'},
+        {name: 'scorebeatmaps', type: 'scorebeatmaps', uses: 'osuver,beatmaps_count'},
+
+    ],
     collectionsStruct: [
         {name: 'osuver', type: 'int32'},
         {name: 'collectionscount', type: 'int32'},

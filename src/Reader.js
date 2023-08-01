@@ -16,49 +16,49 @@ class Reader {
     Read(buff, layout, data = {}) {
       switch (layout.type.toLowerCase()) {
         case 'int8':
-          data = buff.ReadInt8();
+          data = buff.readInt8();
           break;
         case 'uint8':
-          data = buff.ReadUInt8();
+          data = buff.readUint8();
           break;
         case 'int16':
-          data = buff.ReadInt16();
+          data = buff.readInt16();
           break;
         case 'uint16':
-          data = buff.ReadUInt16();
+          data = buff.readUint16();
           break;
         case 'int32':
-          data = buff.ReadInt32();
+          data = buff.readInt32();
           break;
         case 'uint32':
-          data = buff.ReadUInt32();
+          data = buff.readUint32();
           break;
         case 'int64':
-          data = buff.ReadInt64();
+          data = buff.readInt64();
           break;
         case 'uint64':
-          data = buff.ReadUInt64();
+          data = buff.readUint64();
           break;
         case 'string':
-          data = buff.ReadOsuString();
+          data = buff.readString();
           break;
         case 'float':
-          data = buff.ReadFloat();
+          data = buff.readFloat();
           break;
         case 'double':
-          data = buff.ReadDouble();
+          data = buff.readDouble();
           break;
         case 'boolean':
-          data = buff.ReadBoolean();
+          data = buff.readBoolean();
           break;
         case 'byte':
-          data = buff.ReadByte();
+          data = buff.readBytes(1);
           break;
         case 'int32array': {
-          let len = buff.ReadInt16();
+          let len = buff.readInt16();
           data = [];
           for (let i = 0; i < len; i++) {
-            data.push(buff.ReadInt32());
+            data.push(buff.readInt32());
           }
           break;
         }
@@ -67,13 +67,13 @@ class Reader {
           data = [];
           for (let i=0; i < collectionsCount; i++) {
             let collection = {
-              'name': buff.ReadOsuString(),
-              'beatmapsCount': buff.ReadInt32(),
+              'name': buff.readString(),
+              'beatmapsCount': buff.readInt32(),
               'beatmapsMd5': []
             }
 
             for (let i=0; i<collection['beatmapsCount']; i++) {
-              let bmmd5 = buff.ReadOsuString();
+              let bmmd5 = buff.readString();
               collection['beatmapsMd5'].push(bmmd5)
             }
 
@@ -81,38 +81,82 @@ class Reader {
           }
           break;
         }
+
+        case "scorebeatmaps": {
+          let beatmaps = data['beatmaps_count'];
+          data = [];
+          for (let i=0; i < beatmaps; i++) {
+            let beatmapData = {
+              'hash': buff.readString(),
+              'amountScores': buff.readInt32(),
+              'scores': []
+            }
+
+            for (let i=0; i<beatmapData['amountScores']; i++) {
+              let scoreData = {
+                "mode": buff.readBytes(1),
+                "version":  buff.readInt32(),
+                "beatmapHash": buff.readString(),
+                "playerName": buff.readString(),
+                "replayHash": buff.readString(),
+                "amount300": buff.readInt16(),
+                "amount100": buff.readInt16(),
+                "amount50": buff.readInt16(),
+                "amountGekis": buff.readInt16(),
+                "amountKatus": buff.readInt16(),
+                "amountMisses": buff.readInt16(),
+                "score":  buff.readInt32(),
+                "maxcombo":  buff.readInt16(),
+                "perfectboolean":  buff.readBoolean(),
+                "mods":  buff.readInt32(),
+                "alwaysEmpty": buff.readString(),
+                "timestamp": buff.readDateTime().toString(),
+                "always-1":  buff.readInt32(),
+                "scoreID":  buff.readUint64().toString(),
+                // "additionalMods": buff.ReadDouble(),
+              }
+              // console.log(scoreData)
+              beatmapData['scores'].push(scoreData)
+            }
+            //console.log(beatmapData)
+            data.push(beatmapData);
+          }
+          break;
+        }
+
         case "beatmaps": {
             let osuver = data['osuver'];
             let beatmapscount = data['beatmaps_count'];
+           
             data = [];
             for (let i = 0; i < beatmapscount; i++) {
                 if (osuver < 20191107) {
-                  buff.ReadInt32(); // entry size xd
+                  buff.readInt32(); // entry size xd
                 }
                 let beatmap = {
-                  'artist_name': buff.ReadOsuString(),
-                  'artist_name_unicode': buff.ReadOsuString(),
-                  'song_title': buff.ReadOsuString(),
-                  'song_title_unicode': buff.ReadOsuString(),
-                  'creator_name': buff.ReadOsuString(),
-                  'difficulty': buff.ReadOsuString(),
-                  'audio_file_name': buff.ReadOsuString(),
-                  'md5': buff.ReadOsuString(),
-                  'osu_file_name': buff.ReadOsuString(),
-                  'ranked_status': buff.ReadByte(),
-                  'n_hitcircles': buff.ReadInt16(),
-                  'n_sliders': buff.ReadInt16(),
-                  'n_spinners': buff.ReadInt16(),
-                  'last_modification_time': buff.ReadInt64()
+                  'artist_name': buff.readString(),
+                  'artist_name_unicode': buff.readString(),
+                  'song_title': buff.readString(),
+                  'song_title_unicode': buff.readString(),
+                  'creator_name': buff.readString(),
+                  'difficulty': buff.readString(),
+                  'audio_file_name': buff.readString(),
+                  'md5': buff.readString(),
+                  'osu_file_name': buff.readString(),
+                  'ranked_status': buff.readBytes(1),
+                  'n_hitcircles': buff.readInt16(),
+                  'n_sliders': buff.readInt16(),
+                  'n_spinners': buff.readInt16(),
+                  'last_modification_time': buff.readInt64()
                 }
-
+               
                 if (osuver < 20140609) {
                   beatmap = {
                     ...beatmap,
-                    'approach_rate': buff.ReadByte(),
-                    'circle_size': buff.ReadByte(),
-                    'hp_drain': buff.ReadByte(),
-                    'overall_difficulty': buff.ReadByte()
+                    'approach_rate': buff.readBytes(1),
+                    'circle_size': buff.readBytes(1),
+                    'hp_drain': buff.readBytes(1),
+                    'overall_difficulty': buff.readBytes(1)
                   }
                 } else {
                   beatmap = {
@@ -130,12 +174,12 @@ class Reader {
                   let difficulties = []
                   
                   for(let i = 0; i<4; i++) {
-                    let length = buff.ReadInt32()
+                    let length = buff.readInt32()
                     let diffs = {}
                     for(let i=0; i<length; i++) {
-                        buff.ReadByte()
-                        let mode = buff.ReadInt32();
-                        buff.ReadByte();
+                        buff.readBytes(1)
+                        let mode = buff.readInt32();
+                        buff.readBytes(1);
                         let diff = buff.ReadDouble();
                         diffs[mode] = diff
                     }
@@ -153,13 +197,13 @@ class Reader {
                 
                 beatmap = {
                   ...beatmap,
-                  'drain_time': buff.ReadInt32(),
-                  'total_time': buff.ReadInt32(),
-                  'preview_offset': buff.ReadInt32(),
+                  'drain_time': buff.readInt32(),
+                  'total_time': buff.readInt32(),
+                  'preview_offset': buff.readInt32(),
                 }
 
                 let timingPoints = [];
-                let timingPointsLength = buff.ReadInt32()
+                let timingPointsLength = buff.readInt32()
                 for (let i = 0; i < timingPointsLength; i++) {
                   timingPoints.push([
                     buff.ReadDouble(), //BPM
@@ -170,26 +214,26 @@ class Reader {
 
                 beatmap = {
                   ...beatmap,
-                  'beatmap_id': buff.ReadInt32(),
-                  'beatmapset_id': buff.ReadInt32(),
-                  'thread_id': buff.ReadInt32(),
-                  'grade_standard': buff.ReadByte(),
-                  'grade_taiko': buff.ReadByte(),
-                  'grade_ctb': buff.ReadByte(),
-                  'grade_mania': buff.ReadByte(),
-                  'local_beatmap_offset': buff.ReadInt16(),
+                  'beatmap_id': buff.readInt32(),
+                  'beatmapset_id': buff.readInt32(),
+                  'thread_id': buff.readInt32(),
+                  'grade_standard': buff.readBytes(1),
+                  'grade_taiko': buff.readBytes(1),
+                  'grade_ctb': buff.readBytes(1),
+                  'grade_mania': buff.readBytes(1),
+                  'local_beatmap_offset': buff.readInt16(),
                   'stack_leniency': buff.ReadFloat(),
                   'timing_points': timingPoints,
-                  'mode': buff.ReadByte(),
-                  'song_source': buff.ReadOsuString(),
-                  'song_tags': buff.ReadOsuString(),
-                  'online_offset': buff.ReadInt16(),
-                  'title_font': buff.ReadOsuString(),
+                  'mode': buff.readBytes(1),
+                  'song_source': buff.readString(),
+                  'song_tags': buff.readString(),
+                  'online_offset': buff.readInt16(),
+                  'title_font': buff.readString(),
                   'unplayed': buff.ReadBoolean(),
-                  'last_played': buff.ReadInt64(),
+                  'last_played': buff.readInt64(),
                   'osz2': buff.ReadBoolean(),
-                  'folder_name': buff.ReadOsuString(),
-                  'last_checked_against_repository': buff.ReadInt64(),
+                  'folder_name': buff.readString(),
+                  'last_checked_against_repository': buff.readInt64(),
                   'ignore_sound': buff.ReadBoolean(),
                   'ignore_skin': buff.ReadBoolean(),
                   'disable_storyboard': buff.ReadBoolean(),
@@ -198,13 +242,14 @@ class Reader {
                 }
 
                 if (osuver < 20140609) {
-                  buff.ReadInt16()
+                  buff.readInt16()
                 }
-                beatmap['last_modification_time_2'] = buff.ReadInt32();
+                beatmap['last_modification_time_2'] = buff.readInt32();
 
-                beatmap['mania_scroll_speed'] = buff.ReadByte()
+                beatmap['mania_scroll_speed'] = buff.readBytes(1)
 
                 data.push(beatmap);
+               
             }
         }
       }
