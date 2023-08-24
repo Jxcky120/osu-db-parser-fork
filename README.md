@@ -1,5 +1,25 @@
-# osu-db-parser
+# osu-db-parser (Forked from KotRik) (Parses Score.DB too)
 
+```js
+const fs = require("fs");
+const OsuDBParser = require("osu-db-parser");
+
+let scoreBuffer = Buffer.from(fs.readFileSync("./scores.db")); // Path to Scores.db
+const scoreDB = new OsuDBParser(null, null, scoreBuffer); // Yeah, that's okay (No it's not)
+
+let scores = scoreDB.getScoreData(); // This is collection.db data you can make with this all that you want.
+
+fs.writeFileSync('./test.json', JSON.stringify(scores))
+```
+
+Install by adding this git to the dependencies. 
+```json
+  "dependencies": {
+    "osu-db-parser": "https://github.com/Jxcky120/osu-db-parser-fork.git",
+  }
+```
+
+-- Everything under here is from the original ReadME
 [![npm version](https://img.shields.io/npm/v/osu-db-parser)](https://www.npmjs.org/package/osu-db-parser)
 [![install size](https://packagephobia.now.sh/badge?p=osu-db-parser)](https://packagephobia.now.sh/result?p=osu-db-parser)
 [![npm downloads](https://img.shields.io/npm/dm/osu-db-parser.svg)](http://npm-stat.com/charts.html?package=osu-db-parser)
