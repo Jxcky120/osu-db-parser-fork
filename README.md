@@ -20,6 +20,7 @@ Install by adding this git to the dependencies.
 ```
 
 -- Everything under here is from the original ReadME
+
 [![npm version](https://img.shields.io/npm/v/osu-db-parser)](https://www.npmjs.org/package/osu-db-parser)
 [![install size](https://packagephobia.now.sh/badge?p=osu-db-parser)](https://packagephobia.now.sh/result?p=osu-db-parser)
 [![npm downloads](https://img.shields.io/npm/dm/osu-db-parser.svg)](http://npm-stat.com/charts.html?package=osu-db-parser)
