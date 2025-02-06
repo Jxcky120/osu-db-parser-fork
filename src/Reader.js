@@ -161,14 +161,14 @@ class Reader {
                 } else {
                   beatmap = {
                     ...beatmap,
-                    'approach_rate': buff.ReadFloat(),
-                    'circle_size': buff.ReadFloat(),
-                    'hp_drain': buff.ReadFloat(),
-                    'overall_difficulty': buff.ReadFloat()
+                    'approach_rate': buff.readFloat(),
+                    'circle_size': buff.readFloat(),
+                    'hp_drain': buff.readFloat(),
+                    'overall_difficulty': buff.readFloat()
                   }
                 }
 
-                beatmap['slider_velocity'] = buff.ReadDouble()
+                beatmap['slider_velocity'] = buff.readDouble()
                 
                 if (osuver >= 20140609) {
                   let difficulties = []
@@ -180,7 +180,7 @@ class Reader {
                         buff.readBytes(1)
                         let mode = buff.readInt32();
                         buff.readBytes(1);
-                        let diff = buff.ReadDouble();
+                        let diff = buff.readFloat();
                         diffs[mode] = diff
                     }
                     difficulties.push(diffs)
@@ -206,9 +206,9 @@ class Reader {
                 let timingPointsLength = buff.readInt32()
                 for (let i = 0; i < timingPointsLength; i++) {
                   timingPoints.push([
-                    buff.ReadDouble(), //BPM
-                    buff.ReadDouble(), // offset
-                    buff.ReadBoolean() // Boolean
+                    buff.readDouble(), //BPM
+                    buff.readDouble(), // offset
+                    buff.readBoolean() // Boolean
                   ])
                 }
 
@@ -222,23 +222,23 @@ class Reader {
                   'grade_ctb': buff.readBytes(1),
                   'grade_mania': buff.readBytes(1),
                   'local_beatmap_offset': buff.readInt16(),
-                  'stack_leniency': buff.ReadFloat(),
+                  'stack_leniency': buff.readFloat(),
                   'timing_points': timingPoints,
                   'mode': buff.readBytes(1),
                   'song_source': buff.readString(),
                   'song_tags': buff.readString(),
                   'online_offset': buff.readInt16(),
                   'title_font': buff.readString(),
-                  'unplayed': buff.ReadBoolean(),
+                  'unplayed': buff.readBoolean(),
                   'last_played': buff.readInt64(),
-                  'osz2': buff.ReadBoolean(),
+                  'osz2': buff.readBoolean(),
                   'folder_name': buff.readString(),
                   'last_checked_against_repository': buff.readInt64(),
-                  'ignore_sound': buff.ReadBoolean(),
-                  'ignore_skin': buff.ReadBoolean(),
-                  'disable_storyboard': buff.ReadBoolean(),
-                  'disable_video': buff.ReadBoolean(),
-                  'visual_override': buff.ReadBoolean()
+                  'ignore_sound': buff.readBoolean(),
+                  'ignore_skin': buff.readBoolean(),
+                  'disable_storyboard': buff.readBoolean(),
+                  'disable_video': buff.readBoolean(),
+                  'visual_override': buff.readBoolean()
                 }
 
                 if (osuver < 20140609) {
